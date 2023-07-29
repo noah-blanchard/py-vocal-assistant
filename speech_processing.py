@@ -7,7 +7,7 @@ class SpeechProcessing:
         self.tts_engine = tts.init()
 
         self.tts_engine.setProperty("voice", "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_EN-US_ZIRA_11.0")
-        self.tts_engine.setProperty ("rate", 178)
+        self.tts_engine.setProperty("rate", 178)
 
     def listen(self):
         with sr.Microphone() as source:

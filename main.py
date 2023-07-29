@@ -2,6 +2,7 @@ from speech_processing import SpeechProcessing
 from command_processing import CommandProcessing
 from openai_agent import OpenAIAgent
 from todo_manager import TodoManager
+from weather_agent import WeatherAgent
 
 class MainApp:
     def __init__(self):
@@ -9,8 +10,10 @@ class MainApp:
         self.command_processor = CommandProcessing()
         self.openai_agent = OpenAIAgent()
         self.todo_manager = TodoManager()
+        self.weather_agent = WeatherAgent()
 
     def run(self):
+
         while True:
             command = self.speech_processor.listen()
             if command != "":
@@ -20,6 +23,8 @@ class MainApp:
 
                 if label == "to-do list":
                     self.todo_manager.handle_command(command)
+                elif label == "weather":
+                    self.weather_agent.handle_command(command)
                 else:
                     gpt_answer = self.openai_agent.get_response(command)
                     print(f"ChatGPT Answered: {gpt_answer}")

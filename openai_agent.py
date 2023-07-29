@@ -8,7 +8,8 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 class OpenAIAgent:
     def __init__(self, model="gpt-3.5-turbo"):
         self.model = model
-        self.memory = [] # new line
+        self.memory = []
+        self.memory_limit = 10
 
     def create_chat_completion(self, messages):
         response = openai.ChatCompletion.create(
@@ -19,8 +20,8 @@ class OpenAIAgent:
         return response["choices"][0]["message"]["content"]
 
     def get_response(self, command):
-        messages = [
-            {"role": "system", "content": "You are a vocal assistant. You have to answer in a simple, efficient and concise way. Your answer should not take more than 30 seconds to say out loud."},
+        messages=[
+                {"role": "system", "content": "You are a vocal assistant. You have to answer in a simple, efficient and concise way. Your answer should not take more than 30 seconds to say out loud."},
         ]
 
         messages.extend(self.memory)
@@ -42,10 +43,11 @@ class OpenAIAgent:
     def get_command_label(self, command):
         
         messages = [
-                {"role": "system", "content": "You are vocal assistant."},
+                {"role": "system", "content": "You have to classify a command from the user."},
                 {"role": "system", "content": "Your role is to classify the user's command and return only the corresponding label."},
-                {"role": "system", "content": "The labels are : to-do list, normal question."},
+                {"role": "system", "content": "The labels are : 'to-do list', 'weather', 'normal'. The last label is for any unclassified command."},
                 {"role": "system", "content": "If you recognize the user's command as a todo list request (for example),  then return 'to-do list'."},        
+                {"role": "system", "content": "DO NOT answer anything else than the specified labels. If you don't know which one to return, return 'normal', even if the user says something like 'thank you'."},
                 {"role": "user", "content": command}
         ]
 
@@ -112,3 +114,19 @@ class OpenAIAgent:
         todo = self.create_chat_completion(messages)
 
         return todo
+    
+    def extract_information(self, info, command):
+
+        messages = [
+            {"role": "system", "content": "You are an AI assistant tasked with extracting specific information from user commands."},
+            {"role": "system", "content": f"Extract the following detail: {info}"},
+            {"role": "system", "content": f"If the user's message contains any '{info}', return only that detail."},
+            {"role": "system", "content": f"If the user's message doesn't contain any '{info}', return only 'none'."},
+            {"role": "system", "content": f"Remember, your response should only contain the {info} or 'none'."},
+            {"role": "user", "content": command}
+        ]
+
+        extract = self.create_chat_completion(messages)
+
+        return extract
+
