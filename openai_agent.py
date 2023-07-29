@@ -8,6 +8,7 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 class OpenAIAgent:
     def __init__(self, model="gpt-3.5-turbo"):
         self.model = model
+        self.memory = [] # new line
 
     def create_chat_completion(self, messages):
         response = openai.ChatCompletion.create(
@@ -18,12 +19,23 @@ class OpenAIAgent:
         return response["choices"][0]["message"]["content"]
 
     def get_response(self, command):
-        messages=[
-                {"role": "system", "content": "You are a vocal assistant. You have to answer in a simple, efficient and concise way. Your answer should not take more than 30 seconds to say out loud."},
-                {"role": "user", "content": command}
+        messages = [
+            {"role": "system", "content": "You are a vocal assistant. You have to answer in a simple, efficient and concise way. Your answer should not take more than 30 seconds to say out loud."},
         ]
 
+        messages.extend(self.memory)
+        messages.append(
+            {"role": "user", "content": command}
+        )
+
         assistant_reply = self.create_chat_completion(messages)
+
+        if assistant_reply:
+            self.memory.extend([
+                {"role": "user", "content": command},
+                {"role": "assistant", "content": assistant_reply}
+            ])
+            self.memory = self.memory[-self.memory_limit:]
 
         return assistant_reply
     
