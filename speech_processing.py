@@ -1,10 +1,12 @@
 import speech_recognition as sr
 import pyttsx3 as tts
+from openai_agent import OpenAIAgent
 
 class SpeechProcessing:
     def __init__(self):
         self.recognizer = sr.Recognizer()
         self.tts_engine = tts.init()
+        self.openai_agent = OpenAIAgent()
 
         self.tts_engine.setProperty("voice", "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_EN-US_ZIRA_11.0")
         self.tts_engine.setProperty("rate", 178)
@@ -35,11 +37,12 @@ class SpeechProcessing:
             return text
 
     def speak(self, text):
-        self.tts_engine.say(text)
-        self.tts_engine.runAndWait()
+        self.queue(text)
+        self.runAndWait()
 
     def queue(self, text):
-        self.tts_engine.say(text)
+        rephrased_text = self.openai_agent.rephrase(text)
+        self.tts_engine.say(rephrased_text)
 
     def runAndWait(self):
         self.tts_engine.runAndWait()
