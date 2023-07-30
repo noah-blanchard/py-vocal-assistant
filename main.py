@@ -15,7 +15,7 @@ class MainApp:
     def run(self):
 
         while True:
-            command = self.speech_processor.listen()
+            command = self.speech_processor.listen_for_wakeword()
             if command != "":
 
                 label = self.command_processor.handle_command(command)

@@ -131,13 +131,16 @@ class OpenAIAgent:
         return extract
     
     def rephrase(self, text):
+
         messages = [
-            {"role": "system", "content": "You are a helpful rephrasing assistant. You need to rephrase a vocal assistant message in a different, yet equivalent way."},
+            {"role": "system", "content": "You are a helpful rephrasing assistant. You need to rephrase a vocal assistant message in a deffirent, yet equivalent way."},
             {"role": "system", "content": "Keep the same meaning and average length, but change the structure and words when possible."},
             {"role": "system", "content": "Try to avoid using uncommon or complicated words in the rephrased version, keep it simple."},
             {"role": "system", "content": "Keep in mind that the text should be simple and concise, and shouldn't take more than 20 seconds to say out loud."},
-            {"role": "user", "content": text}
+            {"role": "user", "content": text},
         ]
 
         rephrased_command = self.create_chat_completion(messages)
+
         return rephrased_command
+

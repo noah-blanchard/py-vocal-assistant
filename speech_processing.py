@@ -1,6 +1,7 @@
 import speech_recognition as sr
 import pyttsx3 as tts
 from openai_agent import OpenAIAgent
+import time
 
 class SpeechProcessing:
     def __init__(self):
@@ -10,6 +11,32 @@ class SpeechProcessing:
 
         self.tts_engine.setProperty("voice", "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_EN-US_ZIRA_11.0")
         self.tts_engine.setProperty("rate", 178)
+
+    def listen_for_wakeword(self):
+        wakeword = "hey assistant"
+        print("Waiting for wake word...")
+
+        while True:
+            with sr.Microphone() as source:
+                self.recognizer.adjust_for_ambient_noise(source, duration=1)
+                try:
+                    audio = self.recognizer.listen(source, timeout=5)
+                    text = self.recognizer.recognize_google(audio)
+                    if text.lower() == wakeword:
+                        print("Wake word detected.")
+                        return self.listen()
+                    
+                except sr.WaitTimeoutError:
+                    pass
+                except sr.UnknownValueError:
+                    pass
+                except sr.RequestError:
+                    print("Couldn't request results from the Google Speech Recognition service")
+                except Exception as e:
+                    print(f"There was an error: {e}")
+                
+                time.sleep(0.1)
+                    
 
     def listen(self):
         with sr.Microphone() as source:
