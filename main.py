@@ -3,6 +3,7 @@ from command_processing import CommandProcessing
 from openai_agent import OpenAIAgent
 from todo_manager import TodoManager
 from weather_agent import WeatherAgent
+import time
 
 class MainApp:
     def __init__(self):
@@ -15,20 +16,30 @@ class MainApp:
     def run(self):
 
         while True:
-            command = self.speech_processor.listen_for_wakeword()
-            if command != "":
+            
+            if self.speech_processor.listen_for_wakeword():
+                self.speech_processor.speak("Hi ! How can I assist you today ?")
 
-                label = self.command_processor.handle_command(command)
-                print(f"Label recognized by GPT: {label}")
+                while True:
+                    
+                    command = self.speech_processor.listen(timeout=7)
 
-                if label == "to-do list":
-                    self.todo_manager.handle_command(command)
-                elif label == "weather":
-                    self.weather_agent.handle_command(command)
-                else:
-                    gpt_answer = self.openai_agent.get_response(command)
-                    print(f"ChatGPT Answered: {gpt_answer}")
-                    self.speech_processor.speak(gpt_answer)
+                    if command == "":
+                        break                   
+                    elif command is not None:
+
+                        label = self.command_processor.handle_command(command)
+
+                        if label == "to-do list":
+                            self.todo_manager.handle_command(command)
+                        elif label == "weather":
+                            self.weather_agent.handle_command(command)
+                        else:
+                            gpt_answer = self.openai_agent.get_response(command)
+                            print(f"ChatGPT Answered: {gpt_answer}")
+                            self.speech_processor.speak(gpt_answer)
+                    time.sleep(0.1)
+            time.sleep(0.1)
 
 if __name__ == "__main__":
     app = MainApp()

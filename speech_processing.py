@@ -16,37 +16,37 @@ class SpeechProcessing:
         wakeword = "hey assistant"
         print("Waiting for wake word...")
 
-        while True:
-            with sr.Microphone() as source:
-                self.recognizer.adjust_for_ambient_noise(source, duration=1)
-                try:
-                    audio = self.recognizer.listen(source, timeout=5)
-                    text = self.recognizer.recognize_google(audio)
-                    if text.lower() == wakeword:
-                        print("Wake word detected.")
-                        return self.listen()
+        with sr.Microphone() as source:
+            self.recognizer.adjust_for_ambient_noise(source, duration=1)
+            try:
+                audio = self.recognizer.listen(source, timeout=5)
+                text = self.recognizer.recognize_google(audio)
+                if text.lower() == wakeword:
+                    print("Wake word detected.")
+                    return True
                     
-                except sr.WaitTimeoutError:
-                    pass
-                except sr.UnknownValueError:
-                    pass
-                except sr.RequestError:
-                    print("Couldn't request results from the Google Speech Recognition service")
-                except Exception as e:
-                    print(f"There was an error: {e}")
-                
-                time.sleep(0.1)
+            except sr.WaitTimeoutError:
+                pass
+            except sr.UnknownValueError:
+                pass
+            except sr.RequestError:
+                print("Couldn't request results from the Google Speech Recognition service")
+            except Exception as e:
+                print(f"There was an error: {e}")
+            
+            return False
                     
 
-    def listen(self):
+    def listen(self, timeout=5):
         with sr.Microphone() as source:
             self.recognizer.adjust_for_ambient_noise(source, duration=1)
             print("Listening...")
             audio = None
             try:
-                audio = self.recognizer.listen(source, timeout=5)
+                audio = self.recognizer.listen(source, timeout)
             except sr.WaitTimeoutError:
                 print("Listening timed out while waiting for phrase to start")
+                return ""
                 
             text = ""
 
