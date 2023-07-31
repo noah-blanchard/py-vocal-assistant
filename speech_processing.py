@@ -13,11 +13,11 @@ class SpeechProcessing:
         self.tts_engine.setProperty("rate", 178)
 
     def listen_for_wakeword(self):
-        wakeword = "hey assistant"
-        print("Waiting for wake word...")
+        wakeword = "hello my friend"
 
         with sr.Microphone() as source:
             self.recognizer.adjust_for_ambient_noise(source, duration=1)
+            print("Waiting for wake word...")
             try:
                 audio = self.recognizer.listen(source, timeout=5)
                 text = self.recognizer.recognize_google(audio)
@@ -63,13 +63,15 @@ class SpeechProcessing:
             
             return text
 
-    def speak(self, text):
-        self.queue(text)
+    def speak(self, text, rephrase=True):
+        self.queue(text, rephrase)
         self.runAndWait()
 
-    def queue(self, text):
-        rephrased_text = self.openai_agent.rephrase(text)
-        self.tts_engine.say(rephrased_text)
+    def queue(self, text, rephrase=True):
+        if rephrase:
+            self.tts_engine.say(self.openai_agent.rephrase(text))
+        else:
+            self.tts_engine.say(text)
 
     def runAndWait(self):
         self.tts_engine.runAndWait()

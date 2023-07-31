@@ -3,6 +3,8 @@ from command_processing import CommandProcessing
 from openai_agent import OpenAIAgent
 from todo_manager import TodoManager
 from weather_agent import WeatherAgent
+from trivia_agent import TriviaAgent
+from jokes_agent import JokesAgent
 import time
 
 class MainApp:
@@ -12,9 +14,10 @@ class MainApp:
         self.openai_agent = OpenAIAgent()
         self.todo_manager = TodoManager()
         self.weather_agent = WeatherAgent()
+        self.trivia_agent = TriviaAgent()
+        self.jokes_agent = JokesAgent()
 
     def run(self):
-
         while True:
             
             if self.speech_processor.listen_for_wakeword():
@@ -34,6 +37,10 @@ class MainApp:
                             self.todo_manager.handle_command(command)
                         elif label == "weather":
                             self.weather_agent.handle_command(command)
+                        elif label == "trivia":
+                            self.trivia_agent.handle_command(command)
+                        elif label == "joke":
+                            self.jokes_agent.handle_command(command)
                         else:
                             gpt_answer = self.openai_agent.get_response(command)
                             print(f"ChatGPT Answered: {gpt_answer}")

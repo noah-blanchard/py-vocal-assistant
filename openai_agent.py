@@ -45,7 +45,7 @@ class OpenAIAgent:
         messages = [
                 {"role": "system", "content": "You have to classify a command from the user."},
                 {"role": "system", "content": "Your role is to classify the user's command and return only the corresponding label."},
-                {"role": "system", "content": "The labels are : 'to-do list', 'weather', 'normal'. The last label is for any unclassified command."},
+                {"role": "system", "content": "The labels are : 'to-do list', 'weather', 'trivia', 'joke', 'normal'. The last label is for any unclassified command."},
                 {"role": "system", "content": "If you recognize the user's command as a todo list request (for example),  then return 'to-do list'."},        
                 {"role": "system", "content": "DO NOT answer anything else than the specified labels. If you don't know which one to return, return 'normal', even if the user says something like 'thank you'."},
                 {"role": "user", "content": command}
@@ -143,4 +143,19 @@ class OpenAIAgent:
         rephrased_command = self.create_chat_completion(messages)
 
         return rephrased_command
+    
+    def check_trivia_answer(self, correct_answer, user_answer):
+
+        messages = [
+            {"role": "system", "content": "You are an AI assistant."},
+            {"role": "system", "content": "You will be given an answer from a user to a trivia question."},
+            {"role": "system", "content": "The user might use phrases like 'I think', 'Maybe', 'I believe', etc..."},
+            {"role": "system", "content": "But you need to focus on the main content of the answer."},
+            {"role": "system", "content": "If the user's answer is correct, simply reply with 'Correct'. If it is not, reply with 'Incorrect'. Reply with the exact same spelling. Don't add a '.' at the end for example."},
+            {"role": "user", "content": f"The correct answer to a trivia question is '{correct_answer}'. The person answered '{user_answer}'. Is the person's answer correct ?"},
+
+        ]
+
+        verdict = self.create_chat_completion(messages)
+        return verdict
 

@@ -34,7 +34,7 @@ class TodoManager:
         self.speech_processor.queue("Here's what's in your todo list!")
 
         for index, task in enumerate(self.tasks):
-            self.speech_processor.queue(f"{index + 1}: {task}")
+            self.speech_processor.queue(f"{index + 1}: {task}", False)
         
         self.speech_processor.runAndWait()
 
