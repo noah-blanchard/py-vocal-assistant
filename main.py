@@ -18,6 +18,7 @@ class MainApp:
         self.jokes_agent = JokesAgent()
 
     def run(self):
+
         while True:
             
             if self.speech_processor.listen_for_wakeword():

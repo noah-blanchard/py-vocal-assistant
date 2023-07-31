@@ -2,19 +2,26 @@ import speech_recognition as sr
 import pyttsx3 as tts
 from openai_agent import OpenAIAgent
 import time
+from pygame import mixer
 
 class SpeechProcessing:
     def __init__(self):
         self.recognizer = sr.Recognizer()
         self.tts_engine = tts.init()
         self.openai_agent = OpenAIAgent()
+        self.sound_file = "listen_sound.mp3"
+
+        mixer.init()
 
         self.tts_engine.setProperty("voice", "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_EN-US_ZIRA_11.0")
         self.tts_engine.setProperty("rate", 178)
 
+    def play_sound(self):
+        mixer.music.load(self.sound_file)
+        mixer.music.play()
+
     def listen_for_wakeword(self):
         wakeword = "hello my friend"
-
         with sr.Microphone() as source:
             self.recognizer.adjust_for_ambient_noise(source, duration=1)
             print("Waiting for wake word...")
@@ -40,6 +47,7 @@ class SpeechProcessing:
     def listen(self, timeout=5):
         with sr.Microphone() as source:
             self.recognizer.adjust_for_ambient_noise(source, duration=1)
+            self.play_sound()
             print("Listening...")
             audio = None
             try:
