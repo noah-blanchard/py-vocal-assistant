@@ -16,7 +16,7 @@ class JokesAgent:
     def tell_joke(self):
         joke = self.get_joke()
         if joke:
-            self.speech_processor.speak("Okay, here's a joke.", rephrase=False)
+            self.speech_processor.speak("Okay, here's a joke !", rephrase=False)
             self.speech_processor.speak(joke, rephrase=False)
         else:
             self.speech_processor.speak("Sorry... I wasn't able to find any good joke...")
